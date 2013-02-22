@@ -2,6 +2,7 @@
 
 http   = require 'http'
 qs     = require 'querystring'
+util   = require 'util'
 parser = require './routes-parser'
 
 httpopts = (meth, path, ps) ->
@@ -73,34 +74,49 @@ addreq = (reqs, meth, path, ps) ->
   req = httpopts meth, path, ps
   reqs["#{req.method} #{req.path}"] = req
 
-exports.process = (srv, routes, params) ->
+exports.SyntaxError = parser.SyntaxError
+
+class MissingConfig extends Error
+  constructor: (method, path, parameter) ->
+    Error.captureStackTrace this, @constructor
+    @message = util.format \
+      "%s %s uses parameter '%s' with no configuration."
+    , method
+    , path
+    , parameter
+exports.MissingConfig = MissingConfig
+
+exports.process = (srv, routes, params, done) ->
 
   reqs = {}
 
-  for r in parser.parse routes
+  try
+    for r in parser.parse routes
 
-    [meth, path, ps] = r
+      [meth, path, ps] = r
 
-    used =
-      names: []
-      values: []
+      used =
+        names: []
+        values: []
 
-    for [n, c] in ps
-      if c of params
-        used.names.push n
-        used.values.push params[c]
+      for [n, c] in ps
+        if c of params
+          used.names.push n
+          used.values.push params[c]
+        else
+          throw new MissingConfig meth, path, c
+
+      unless used.values.length
+        addreq reqs, meth, path, []
       else
-        console.dir ["OMG", "#{meth} #{path}", c]
+        for c in combinations used.values...
+          ps = ([n, c[i]] for n, i in used.names)
+          addreq reqs, meth, path, ps
 
-    unless used.values.length
-      addreq reqs, meth, path, []
-    else
-      for c in combinations used.values...
-        ps = ([n, c[i]] for n, i in used.names)
-        addreq reqs, meth, path, ps
-
-  for _, req of reqs
-    request srv, req, (e, r) ->
-      return console.dir e
+    for _, req of reqs
+      request srv, req, (e, r) ->
+        return console.dir e
+  catch e
+    done e
 
 

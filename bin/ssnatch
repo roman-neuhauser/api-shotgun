@@ -1,9 +1,12 @@
 #!/usr/bin/env coffee
 
+errno  = require 'errno'
 fs     = require 'fs'
 path   = require 'path'
 url    = require 'url'
 snatch = require '..'
+
+self = path.basename __filename
 
 [srv, rfile, pfile] = process.argv[2..4]
 
@@ -13,6 +16,31 @@ pfile ||= 'params.coffee'
 
 params = require path.resolve pfile
 
-fs.readFile rfile, 'utf8', (e, routes) ->
-  throw e if e
-  snatch.process srv, routes, params
+complain = (fmt, args...) ->
+  console.error "%s: #{fmt}", self, args...
+
+report = (e) ->
+  if e instanceof snatch.SyntaxError
+    complain \
+      "%s: syntax error on line %d column %d: %s"
+    , rfile
+    , e.line
+    , e.column
+    , e.message
+  else if 'path' of e
+    complain \
+      "%s: %s"
+    , e.path
+    , errno.errno[e.errno]?.description or e.message
+  else
+    complain \
+      "%s"
+    , errno.errno[e.errno]?.description or e.message
+
+safe = (f) -> (e, args...) ->
+  return f args... unless e
+  report e
+  process.exit 1
+
+fs.readFile rfile, 'utf8', safe (routes) ->
+  snatch.process srv, routes, params, safe ->
