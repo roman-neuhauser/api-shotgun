@@ -1,0 +1,4 @@
+.*.sw?
+.sw?
+*.html
+node_modules/
