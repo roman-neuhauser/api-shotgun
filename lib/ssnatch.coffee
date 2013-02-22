@@ -74,6 +74,9 @@ addreq = (reqs, meth, path, ps) ->
   reqs["#{req.method} #{req.path}"] = req
 
 exports.process = (srv, routes, params) ->
+
+  reqs = {}
+
   for r in parser.parse routes
 
     [meth, path, ps] = r
@@ -89,8 +92,6 @@ exports.process = (srv, routes, params) ->
       else
         console.dir ["OMG", "#{meth} #{path}", c]
 
-    reqs = {}
-
     unless used.values.length
       addreq reqs, meth, path, []
     else
@@ -98,8 +99,8 @@ exports.process = (srv, routes, params) ->
         ps = ([n, c[i]] for n, i in used.names)
         addreq reqs, meth, path, ps
 
-    for _, req of reqs
-      request srv, req, (e, r) ->
-        return console.dir e
+  for _, req of reqs
+    request srv, req, (e, r) ->
+      return console.dir e
 
 
