@@ -1,0 +1,18 @@
+#!/usr/bin/env coffee
+
+fs     = require 'fs'
+path   = require 'path'
+url    = require 'url'
+snatch = require '..'
+
+[srv, rfile, pfile] = process.argv[2..4]
+
+srv     = url.parse srv
+rfile ||= 'routes'
+pfile ||= 'params.coffee'
+
+params = require path.resolve pfile
+
+fs.readFile rfile, 'utf8', (e, routes) ->
+  throw e if e
+  snatch.process srv, routes, params

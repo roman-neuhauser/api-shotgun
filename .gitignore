@@ -1,4 +1,5 @@
 .*.sw?
 .sw?
 *.html
+lib/routes-parser.js
 node_modules/

@@ -1,0 +1,21 @@
+.. vim: ft=rst sts=2 sw=2 tw=70
+.. default-role:: literal
+
+======================================================================
+                            studio_snatch
+======================================================================
+----------------------------------------------------------------------
+              Exhaustive SUSE Studio API validation tool
+----------------------------------------------------------------------
+
+:Author: Roman Neuhauser
+:Contact: rneuhauser@suse.cz
+:Copyright: This document is in the public domain.
+
+Usage
+=====
+
+::
+
+  snatch http://apiuser:apikey@machine[:port]
+

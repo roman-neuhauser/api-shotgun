@@ -1,0 +1,31 @@
+{
+  "author": "Roman Neuhauser <rneuhauser@suse.cz>"
+, "name": "studio_snatch"
+, "private": true
+, "description": "Exhaustive SUSE Studio API validation tool"
+, "version": "0.0.0"
+, "main": "lib/ssnatch.coffee"
+, "files": [
+    "GNUmakefile"
+  , "README.rest"
+  , "bin/ssnatch"
+  , "lib/ssnatch.coffee"
+  , "routes"
+  , "tests/comb.t.coffee"
+  ]
+, "bin": "./bin/ssnatch"
+, "scripts": {
+    "test": "make do-check"
+  }
+, "dependencies": {
+    "coffee-script": "~1.4"
+  , "mocha": "~1.8"
+  }
+, "devDependencies": {
+    "pegjs": "~0.7"
+  }
+, "optionalDependencies": {}
+, "engines": {
+    "node": ">0.5 <0.9"
+  }
+}
