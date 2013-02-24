@@ -13,7 +13,7 @@
   , "routes"
   , "tests/comb.t.coffee"
   ]
-, "bin": "./bin/ssnatch"
+, "bin": { "ssnatch": "./bin/ssnatch" }
 , "scripts": {
     "test": "make do-check"
   }
