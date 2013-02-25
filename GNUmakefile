@@ -12,9 +12,6 @@ check:
 do-check:
 	$(MOCHA) tests/*.t.coffee
 
-waves:
-	./bin/ssnatch routes
-
 lib/routes-parser.js: src/routes.pegjs
 	$(PEGJS) $< $@
 
@@ -23,6 +20,6 @@ MAKEFLAGS =	--no-print-directory \
 		--no-builtin-variables
 
 
-.PHONY: all check do-check waves
+.PHONY: all check do-check
 
 # vim: ts=8 noet sw=2 sts=2
