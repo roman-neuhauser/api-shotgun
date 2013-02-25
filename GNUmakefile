@@ -17,6 +17,10 @@ npm-install:
 do-check:
 	$(MOCHA) tests/*.t.coffee
 
+run:
+	env PATH=$$PWD/node_modules/coffee-script/bin:$$PATH \
+	  ./bin/ssnatch $(against)
+
 lib/routes-parser.js: src/routes.pegjs
 	$(PEGJS) $< $@
 
@@ -25,6 +29,6 @@ MAKEFLAGS =	--no-print-directory \
 		--no-builtin-variables
 
 
-.PHONY: all bootstrap check do-check npm-install
+.PHONY: all bootstrap check do-check npm-install run
 
 # vim: ts=8 noet sw=2 sts=2
