@@ -1,9 +1,12 @@
 #!/usr/bin/env coffee
 
+fs     = require 'fs'
 http   = require 'http'
 qs     = require 'querystring'
 util   = require 'util'
 parser = require './routes-parser'
+
+sprintf = require 'printf'
 
 httpopts = (meth, path, ps) ->
   ps = ops ps
@@ -18,20 +21,90 @@ extend = (dest, sources...) ->
       dest[key] = val
   dest
 
+tsfmt = (ts) ->
+  sprintf "%d-%02d-%02d %02d:%02d:%02d"
+  , ts.getFullYear()
+  , ts.getMonth()
+  , ts.getDate()
+  , ts.getHours()
+  , ts.getMinutes()
+  , ts.getSeconds()
+
+logrequest = (ts, req) ->
+  console.log "snatch-request %s %s %s"
+  , (tsfmt ts)
+  , req.method
+  , req.path
+
+logresponse = (ts, req, res) ->
+  console.log "snatch-response %s %s %s %s"
+  , (tsfmt ts)
+  , res.statusCode
+  , req.method
+  , req.path
+
+logerror = (ts, req, e) ->
+  console.error "%s %s"
+  , (tsfmt ts)
+  , e
+
+log5xx = (ts, req, res) ->
+  console.error "%s %s %s %s"
+  , (tsfmt ts)
+  , res.statusCode
+  , req.method
+  , req.path
+
+write_response = (path, req, res, body) ->
+  txt = sprintf "%s %s %s" \
+  , res.statusCode
+  , req.method
+  , req.path
+  txt += "\n\n#{body}" if body
+  fs.writeFile path, txt, 'utf8', (e) ->
+    if e
+      console.error "FAIL #{path}"
+    else
+      console.warn "wrote #{path}"
+
+responsepath = (req) ->
+  sprintf "response/%s_%s"
+  , req.method
+  , req.path.replace /\/|\s+/g, (m) ->
+    switch m
+      when '/' then '.'
+      else '_'
+
 _request = http.request
 
 request = (srv, options, done) ->
-  return console.log "#{options.method} #{options.path}"
+  logrequest new Date, options
   options = extend {}, srv, options
-  req = _request options, (res) ->
-    body = ''
-    res.on 'data', (chunk) ->
-      c = chunk.toString()
-      body += c
-    res.on 'end', ->
-      done undefined, body
+  req = _request options, _respond done
   req.on 'error', done
   req.end()
+
+_respond = (done) -> (res) ->
+  body = ''
+  res.on 'data', (chunk) ->
+    c = chunk.toString()
+    body += c
+  res.on 'end', ->
+    done undefined, body, res
+
+respond = (req) -> (e, body, res) ->
+  sig = "#{req.method} #{req.path}"
+  ts = new Date
+  responsef = responsepath req
+  if e
+    logerror ts, req, e
+    fs.unlink responsef
+  else
+    if res.statusCode >= 500
+      log5xx ts, req, res
+    else
+      logresponse ts, req, res
+      write_response responsef, req, res, body
 
 mkpath = (tpl, ps) ->
   used = []
@@ -79,7 +152,7 @@ exports.SyntaxError = parser.SyntaxError
 class MissingConfig extends Error
   constructor: (method, path, parameter) ->
     Error.captureStackTrace this, @constructor
-    @message = util.format \
+    @message = sprintf \
       "%s %s uses parameter '%s' with no configuration."
     , method
     , path
@@ -114,8 +187,7 @@ exports.process = (srv, routes, params, done) ->
           addreq reqs, meth, path, ps
 
     for _, req of reqs
-      request srv, req, (e, r) ->
-        return console.dir e
+      request srv, req, respond req
   catch e
     done e
 

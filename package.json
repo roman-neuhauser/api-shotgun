@@ -21,6 +21,7 @@
     "coffee-script": "~1.4"
   , "errno": "0.0.3"
   , "mocha": "~1.8"
+  , "printf": "~0.1"
   }
 , "devDependencies": {
     "pegjs": "~0.7"
