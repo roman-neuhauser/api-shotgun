@@ -23,7 +23,7 @@ path      = p: ('/' pathseg)+
 pathseg   = p: pcode    { return ':' + p; }
           / p: segment  { return       p; }
 
-segment   = p:$[._0-9a-z]+
+segment   = p: [._0-9a-z]+ { return p.join(''); }
 
 params    = param*
 
@@ -35,8 +35,8 @@ oparam    = '?' HS p:pbody { return p; }
 
 pbody     = n:pname HS '=' HS c:pcode NL { return [n, c]; }
 
-pname     =     p:$[a-z_]+
-pcode     = ':' p:$[a-z_]+ { return p; }
+pname     =     p: [a-z_]+ { return p.join(''); }
+pcode     = ':' p: [a-z_]+ { return p.join(''); }
 
 HS        = [ \t]+
 NL        = "\n"
