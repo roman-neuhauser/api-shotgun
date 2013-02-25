@@ -17,12 +17,8 @@ Usage
 
 ::
 
-  git init somedir
-  cd somedir
-  git remote add upstream -t master -m master \
-    https://github.com/roman-neuhauser/studio_snatch.git
-  git fetch upstream
-  git checkout -t upstream/master
-  make
-  ./bin/ssnatch http://apiuser:apikey@machine[:port]
+  git clone https://github.com/roman-neuhauser/studio_snatch.git
+  cd studio_snatch
+  make bootstrap
+  make run against=http://apiuser:apikey@machine[:port]
 
