@@ -31,13 +31,17 @@ tsfmt = (ts) ->
   , ts.getSeconds()
 
 logrequest = (ts, req) ->
-  console.log "snatch-request %s %s %s"
+  console.log "%s < %s %s"
   , (tsfmt ts)
   , req.method
   , req.path
 
 logresponse = (ts, req, res) ->
-  console.log "snatch-response %s %s %s %s"
+  f = if res.statusCode >= 500
+    console.error
+  else
+    console.log
+  f "%s > %s %s %s"
   , (tsfmt ts)
   , res.statusCode
   , req.method
@@ -48,13 +52,6 @@ logerror = (ts, req, e) ->
   , (tsfmt ts)
   , e
 
-log5xx = (ts, req, res) ->
-  console.error "%s %s %s %s"
-  , (tsfmt ts)
-  , res.statusCode
-  , req.method
-  , req.path
-
 write_response = (path, req, res, body) ->
   txt = sprintf "%s %s %s" \
   , res.statusCode
@@ -64,8 +61,6 @@ write_response = (path, req, res, body) ->
   fs.writeFile path, txt, 'utf8', (e) ->
     if e
       console.error "FAIL #{path}"
-    else
-      console.warn "wrote #{path}"
 
 responsepath = (req) ->
   sprintf "response/%s_%s"
@@ -100,11 +95,8 @@ respond = (req) -> (e, body, res) ->
     logerror ts, req, e
     fs.unlink responsef
   else
-    if res.statusCode >= 500
-      log5xx ts, req, res
-    else
-      logresponse ts, req, res
-      write_response responsef, req, res, body
+    logresponse ts, req, res
+    write_response responsef, req, res, body
 
 mkpath = (tpl, ps) ->
   used = []
