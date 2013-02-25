@@ -1,5 +1,8 @@
-MOCHA =		mocha --compilers t.coffee:coffee-script
-PEGJS =		pegjs
+MOCHA =		$(MOCHACMD) --compilers t.coffee:coffee-script
+PEGJS =		$(PEGJSCMD)
+
+MOCHACMD ?=	./node_modules/mocha/bin/mocha
+PEGJSCMD ?=	./node_modules/pegjs/bin/pegjs
 
 all: lib/routes-parser.js
 
