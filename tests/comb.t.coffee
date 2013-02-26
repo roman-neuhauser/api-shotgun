@@ -1,7 +1,7 @@
-snatch = require '..'
+shotgun = require '..'
 assert = require 'assert'
 
-combinations = snatch.combinations
+combinations = shotgun.combinations
 
 describe "combinations", ->
 

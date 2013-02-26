@@ -4,16 +4,16 @@
 , "private": true
 , "description": "Shotgun testing tool for web APIs"
 , "version": "0.0.0"
-, "main": "lib/ssnatch.coffee"
+, "main": "lib/api-shotgun.coffee"
 , "files": [
     "GNUmakefile"
   , "README.rest"
-  , "bin/ssnatch"
-  , "lib/ssnatch.coffee"
+  , "bin/api-shotgun"
+  , "lib/api-shotgun.coffee"
   , "routes"
   , "tests/comb.t.coffee"
   ]
-, "bin": { "ssnatch": "./bin/ssnatch" }
+, "bin": { "api-shotgun": "./bin/api-shotgun" }
 , "scripts": {
     "test": "make do-check"
   }

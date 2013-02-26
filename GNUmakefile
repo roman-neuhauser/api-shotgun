@@ -19,7 +19,7 @@ do-check:
 
 run:
 	env PATH=$$PWD/node_modules/coffee-script/bin:$$PATH \
-	  ./bin/ssnatch $(against)
+	  ./bin/api-shotgun $(against)
 
 lib/routes-parser.js: src/routes.pegjs
 	$(PEGJS) $< $@

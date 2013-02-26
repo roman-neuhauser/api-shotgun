@@ -4,7 +4,7 @@ errno  = require 'errno'
 fs     = require 'fs'
 path   = require 'path'
 url    = require 'url'
-snatch = require '..'
+shotgun = require '..'
 
 self = path.basename __filename
 
@@ -20,7 +20,7 @@ complain = (fmt, args...) ->
   console.error "%s: #{fmt}", self, args...
 
 report = (e) ->
-  if e instanceof snatch.SyntaxError
+  if e instanceof shotgun.SyntaxError
     complain \
       "%s: syntax error on line %d column %d: %s"
     , rfile
@@ -43,4 +43,4 @@ safe = (f) -> (e, args...) ->
   process.exit 1
 
 fs.readFile rfile, 'utf8', safe (routes) ->
-  snatch.process srv, routes, params, safe ->
+  shotgun.process srv, routes, params, safe ->
