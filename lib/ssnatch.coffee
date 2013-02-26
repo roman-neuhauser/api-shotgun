@@ -2,10 +2,12 @@
 
 fs     = require 'fs'
 http   = require 'http'
+path   = require 'path'
 qs     = require 'querystring'
 util   = require 'util'
 parser = require './routes-parser'
 
+mkdir_p = require 'mkdirp'
 sprintf = require 'printf'
 
 httpopts = (meth, path, ps) ->
@@ -96,11 +98,13 @@ respond = (req) -> (e, body, res) ->
       logerror new Date, req, e unless e?.code == 'ENOENT'
   else
     logresponse ts, req, res
-    write_response responsef, req, res, body
+    mkdir_p (path.dirname responsef), (e) ->
+      return logerror new Date, req, e if e
+      write_response responsef, req, res, body
 
-mkpath = (tpl, ps) ->
+mkpath = (path, ps) ->
   used = []
-  path = tpl.replace /:(\w+)/g, (_, param) ->
+  path = path.replace /:(\w+)/g, (_, param) ->
     used.push param
     if ps[param] is undefined then '' else ps[param]
   rv = {}
