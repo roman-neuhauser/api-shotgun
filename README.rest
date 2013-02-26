@@ -33,6 +33,8 @@ of URL templates (routes) and configuration of input parameters.
 `studio_snatch` generates an URL for each distinct combination of
 values of pertinent parameters.
 
+Responses are stored in files under `response/`.
+
 Requirements
 ============
 
@@ -172,3 +174,19 @@ Example: ::
 
   2013-01-26 11:39:45Z Error: getaddrinfo ENOENT
 
+Files
+*****
+
+`studio_snatch` stores responses received from the server under
+`response/`.
+Filenames are formed according to this grammar: ::
+
+  http_meth "_" http_path_alt
+  ; http_path_alt is http_path with s#/#.#g
+
+When a request fails on the socket level (timeout or similar),
+the corresponding file is removed.
+Otherwise, its contents obey the following grammar: ::
+
+  response = header NL response_entity
+  header   = http_status SP http_meth SP http_path NL
