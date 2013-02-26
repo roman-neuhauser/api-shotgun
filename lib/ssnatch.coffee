@@ -59,8 +59,7 @@ write_response = (path, req, res, body) ->
   , req.path
   txt += "\n\n#{body}" if body
   fs.writeFile path, txt, 'utf8', (e) ->
-    if e
-      console.error "FAIL #{path}"
+    logerror new Date, req, e if e
 
 responsepath = (req) ->
   sprintf "response/%s_%s"
@@ -93,7 +92,8 @@ respond = (req) -> (e, body, res) ->
   responsef = responsepath req
   if e
     logerror ts, req, e
-    fs.unlink responsef
+    fs.unlink responsef, (e) ->
+      logerror new Date, req, e unless e?.code == 'ENOENT'
   else
     logresponse ts, req, res
     write_response responsef, req, res, body
