@@ -158,25 +158,23 @@ exports.process = (srv, routes, params, done) ->
   try
     for r in parser.parse routes
 
-      [meth, path, ps] = r
-
       used =
         names: []
         values: []
 
-      for [n, c] in ps
+      for [n, c] in r.params
         if c of params
           used.names.push n
           used.values.push params[c]
         else
-          throw new MissingConfig meth, path, c
+          throw new MissingConfig r.method, r.path, c
 
       unless used.values.length
-        addreq reqs, meth, path, []
+        addreq reqs, r.method, r.path, []
       else
         for c in combinations used.values...
           ps = ([n, c[i]] for n, i in used.names)
-          addreq reqs, meth, path, ps
+          addreq reqs, r.method, r.path, ps
 
     for _, req of reqs
       request srv, req, respond req

@@ -2,7 +2,7 @@ specs     = spec*
 
 spec      = m:method HS p:path NL ps:params? NL*
 {
-  return [m, p[0], p[1].concat(ps)];
+  return { method: m, path: p[0], params: p[1].concat(ps) };
 }
 
 method    = 'DELETE' / 'GET' / 'POST' / 'PUT'
