@@ -1,8 +1,8 @@
 {
   "author": "Roman Neuhauser <rneuhauser@suse.cz>"
-, "name": "studio_snatch"
+, "name": "api-shotgun"
 , "private": true
-, "description": "Exhaustive SUSE Studio API validation tool"
+, "description": "Shotgun testing tool for web APIs"
 , "version": "0.0.0"
 , "main": "lib/ssnatch.coffee"
 , "files": [

@@ -2,10 +2,10 @@
 .. default-role:: literal
 
 ======================================================================
-                            studio_snatch
+                             api-shotgun
 ======================================================================
 ----------------------------------------------------------------------
-               Shotgun testing tool for SUSE Studio API
+                  Shotgun testing tool for web APIs
 ----------------------------------------------------------------------
 
 :Author: Roman Neuhauser
@@ -17,12 +17,12 @@
 Overview
 ========
 
-`studio_snatch` looks for bugs in Studio API by generating various,
+`api-shotgun` looks for bugs in Studio API by generating various,
 mostly invalid requests.
-5xx errors are obviously symptoms of bugs; `studio_snatch` can also
+5xx errors are obviously symptoms of bugs; `api-shotgun` can also
 help find unexpected status codes and response bodies.
 
-`studio_snatch` is a complement, not a replacement, to controller
+`api-shotgun` is a complement, not a replacement, to controller
 unit tests.
 It is basically just a dumb URL generator and has no notion of
 setup or teardown.
@@ -30,7 +30,7 @@ setup or teardown.
 The HTTP requests performed are derived from two input files: a list
 of URL templates (routes) and configuration of input parameters.
 
-`studio_snatch` generates an URL for each distinct combination of
+`api-shotgun` generates an URL for each distinct combination of
 values of pertinent parameters.
 
 Responses are stored in files under `response/`.
@@ -38,7 +38,7 @@ Responses are stored in files under `response/`.
 Requirements
 ============
 
-`studio_snatch` requires `Node.js` 0.[6-8] and `npm`.
+`api-shotgun` requires `Node.js` 0.[6-8] and `npm`.
 `GNU make` is recommended.
 
 Usage
@@ -46,8 +46,8 @@ Usage
 
 ::
 
-  git clone https://github.com/roman-neuhauser/studio_snatch.git
-  cd studio_snatch
+  git clone https://github.com/roman-neuhauser/api-shotgun.git
+  cd api-shotgun
   make bootstrap
   make run against=http://apiuser:apikey@machine[:port]
 
@@ -82,7 +82,7 @@ This file follows a grammar sketched in the following simplified
 The `routes` file distinguishes mandatory and optional parameters
 based on the official documentation (studio-help); this distinction
 is not reflected in runtime behavior at all, it is present only as
-a form of documentation: `studio_snatch` generates requests missing
+a form of documentation: `api-shotgun` generates requests missing
 mandatory parameters with great pleasure.
 
 Example ::
@@ -133,7 +133,7 @@ OTOH, `name` (`:appname`) is present in all URLs, if only empty.
 Logging
 *******
 
-`studio_snatch` outputs a line for each request being sent, and each
+`api-shotgun` outputs a line for each request being sent, and each
 response being received.
 Runtime errors, if any, are reported on `stderr`.
 
@@ -177,7 +177,7 @@ Example: ::
 Files
 *****
 
-`studio_snatch` stores responses received from the server under
+`api-shotgun` stores responses received from the server under
 `response/`.
 Filenames are formed according to this grammar: ::
 
