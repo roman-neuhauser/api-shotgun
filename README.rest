@@ -135,15 +135,40 @@ Logging
 response being received.
 Runtime errors, if any, are reported on `stderr`.
 
-Request: ::
+Requests
+++++++++
+
+Grammar: ::
+
+  request   = datetime SP "<" SP http_meth SP http_path
+  datetime  = date SP time "Z"
+  http_meth = "DELETE" / "GET" / "POST" / "PUT"
+  date      = 4*DIGIT "-" 2*DIGIT "-" 2*DIGIT
+  time      = 2*DIGIT ":" 2*DIGIT ":" 2*DIGIT
+
+Example: ::
 
   2013-01-26 11:39:35Z < POST /api/v2/user/appliances?name=&arch=x86_64
 
-Response: ::
+Responses
++++++++++
+
+Grammar: ::
+
+  response  = datetime SP ">" SP http_status SP http_meth SP http_path
+
+Example: ::
 
   2013-01-26 11:39:37Z > 400 POST /api/v2/user/appliances?name=&arch=x86_64
 
-Error: ::
+Errors
+++++++
+
+Grammar: ::
+
+  error = datetime SP freeform
+
+Example: ::
 
   2013-01-26 11:39:45Z Error: getaddrinfo ENOENT
 
