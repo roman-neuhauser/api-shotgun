@@ -185,9 +185,22 @@ Filenames are formed according to this grammar: ::
   http_meth "_" http_path_alt
   ; http_path_alt is http_path with s#/#.#g
 
+Example (for `GET /api/v2/user/appliances/0`): ::
+
+  GET_.api.v2.user.appliances.0
+
 When a request fails on the socket level (timeout or similar),
 the corresponding file is removed.
 Otherwise, its contents obey the following grammar: ::
 
   response = header NL response_entity
   header   = http_status SP http_meth SP http_path NL
+
+Example: ::
+
+  404 GET /api/v2/user/appliances/0
+
+  <error>
+    <code>invalid_appliance_id</code>
+    <message>Invalid appliance id.</message>
+  </error>
