@@ -12,6 +12,33 @@
 :Contact: rneuhauser@suse.cz
 :Copyright: This document is in the public domain.
 
+.. contents::
+
+Overview
+========
+
+`studio_snatch` looks for bugs in Studio API by generating various,
+mostly invalid requests.
+5xx errors are obviously symptoms of bugs; `studio_snatch` can also
+help find unexpected status codes and response bodies.
+
+`studio_snatch` is a complement, not a replacement, to controller
+unit tests.
+It is basically just a dumb URL generator and has no notion of
+setup or teardown.
+
+The HTTP requests performed are derived from two input files: a list
+of URL templates (routes) and configuration of input parameters.
+
+`studio_snatch` generates an URL for each distinct combination of
+values of pertinent parameters.
+
+Requirements
+============
+
+`studio_snatch` requires `Node.js` 0.[6-8] and `npm`.
+`GNU make` is recommended.
+
 Usage
 =====
 
@@ -21,4 +48,102 @@ Usage
   cd studio_snatch
   make bootstrap
   make run against=http://apiuser:apikey@machine[:port]
+
+Inputs
+======
+
+Routes
+******
+
+This file follows a grammar sketched in the following simplified
+(only some significat whitespace is included) ABNF_ grammar: ::
+
+  specs     = *spec
+
+  spec      = method HS path NL params NL*
+  method    = "DELETE" / "GET" / "POST" / "PUT"
+  path      = 1*("/" pathseg)
+  pathseg   = p_ref / segment
+  segment   = 1*(WCHAR / ".")
+  params    = *param
+  param     = HS (mparam / oparam)
+  mparam    = "!" pbody  ; mandatory
+  oparam    = "?" pbody  ; optional
+  pbody     = pname "=" p_ref NL
+  pname     = 1*WCHAR
+  p_ref     = ":" pcode
+  pcode     = 1*WCHAR
+  WCHAR     = ALPHA / DIGIT / "_"
+
+.. _ABNF: http://tools.ietf.org/html/rfc5234
+
+The `routes` file distinguishes mandatory and optional parameters
+based on the official documentation (studio-help); this distinction
+is not reflected in runtime behavior at all, it is present only as
+a form of documentation: `studio_snatch` generates requests missing
+mandatory parameters with great pleasure.
+
+Example ::
+
+  POST   /api/v2/user/appliances
+         ! clone_from = :app
+         ? name       = :appname
+         ? arch       = :arch
+
+Parameters
+**********
+
+This file is a Node.js module exporting an object where each
+property is one of the `p_ref`\s found in `routes`, with its
+value being an array of values to use in generated requests.
+`undefined` results in this parameter being left out of the
+query string completely.
+
+Example ::
+
+  module.exports =
+    app:     [undefined, '', 0, 1]
+    appname: ['', '~!@#$%^&*()+|-']
+    arch:    ['x86_64']
+
+Outputs
+=======
+
+URLs
+****
+
+The examples in Inputs_ would generate the following requests: ::
+
+  POST /api/v2/user/appliances?name=&arch=x86_64
+  POST /api/v2/user/appliances?name=~!%40%23%24%25%5E%26*()%2B%7C-&arch=x86_64
+  POST /api/v2/user/appliances?clone_from=&name=&arch=x86_64
+  POST /api/v2/user/appliances?clone_from=&name=~!%40%23%24%25%5E%26*()%2B%7C-&arch=x86_64
+  POST /api/v2/user/appliances?clone_from=0&name=&arch=x86_64
+  POST /api/v2/user/appliances?clone_from=0&name=~!%40%23%24%25%5E%26*()%2B%7C-&arch=x86_64
+  POST /api/v2/user/appliances?clone_from=1&name=&arch=x86_64
+  POST /api/v2/user/appliances?clone_from=1&name=~!%40%23%24%25%5E%26*()%2B%7C-&arch=x86_64
+
+Notice that `clone_from` (`:app`) is outright missing from two URLs
+since its configuration includes `undefined`, and empty in another
+two, thanks to `''` in the configuration.
+OTOH, `name` (`:appname`) is present in all URLs, if only empty.
+
+Logging
+*******
+
+`studio_snatch` outputs a line for each request being sent, and each
+response being received.
+Runtime errors, if any, are reported on `stderr`.
+
+Request: ::
+
+  2013-01-26 11:39:35Z < POST /api/v2/user/appliances?name=&arch=x86_64
+
+Response: ::
+
+  2013-01-26 11:39:37Z > 400 POST /api/v2/user/appliances?name=&arch=x86_64
+
+Error: ::
+
+  2013-01-26 11:39:45Z Error: getaddrinfo ENOENT
 
