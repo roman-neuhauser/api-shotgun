@@ -11,8 +11,8 @@ self = path.basename __filename
 [srv, rfile, pfile] = process.argv[2..4]
 
 srv     = url.parse srv
-rfile ||= 'routes'
-pfile ||= 'params.coffee'
+rfile ||= 'config/routes'
+pfile ||= 'config/params.coffee'
 
 params = require path.resolve pfile
 
