@@ -17,8 +17,8 @@
 Overview
 ========
 
-`api-shotgun` looks for bugs in Studio API by generating various,
-mostly invalid requests.
+`api-shotgun` looks for bugs in a web application by generating
+various, mostly invalid requests.
 5xx errors are obviously symptoms of bugs; `api-shotgun` can also
 help find unexpected status codes and response bodies.
 
@@ -80,11 +80,10 @@ This file follows a grammar sketched in the following simplified
 
 .. _ABNF: http://tools.ietf.org/html/rfc5234
 
-The `routes` file distinguishes mandatory and optional parameters
-based on the official documentation (studio-help); this distinction
-is not reflected in runtime behavior at all, it is present only as
-a form of documentation: `api-shotgun` generates requests missing
-mandatory parameters with great pleasure.
+The `routes` file distinguishes mandatory and optional parameters;
+this distinction is not reflected in runtime behavior at all, it is
+present only as a form of documentation: `api-shotgun` generates
+requests missing mandatory parameters with great pleasure.
 
 Example ::
 
