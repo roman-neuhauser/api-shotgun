@@ -59,7 +59,7 @@ Routes
 ******
 
 This file follows a grammar sketched in the following simplified
-(only some significat whitespace is included) ABNF_ grammar: ::
+(only some significant whitespace is included) ABNF_ grammar: ::
 
   specs     = *spec
 
