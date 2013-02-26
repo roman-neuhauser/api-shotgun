@@ -49,6 +49,7 @@ Usage
   git clone https://github.com/roman-neuhauser/api-shotgun.git
   cd api-shotgun
   make bootstrap
+  git clone https://github.com/roman-neuhauser/api-shotgun-studio.git config
   make run against=http://apiuser:apikey@machine[:port]
 
 Inputs
