@@ -5,7 +5,7 @@
                             studio_snatch
 ======================================================================
 ----------------------------------------------------------------------
-              Exhaustive SUSE Studio API validation tool
+               Shotgun testing tool for SUSE Studio API
 ----------------------------------------------------------------------
 
 :Author: Roman Neuhauser
