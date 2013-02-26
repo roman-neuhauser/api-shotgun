@@ -24,13 +24,13 @@ extend = (dest, sources...) ->
   dest
 
 tsfmt = (ts) ->
-  sprintf "%d-%02d-%02d %02d:%02d:%02d"
-  , ts.getFullYear()
-  , ts.getMonth()
-  , ts.getDate()
-  , ts.getHours()
-  , ts.getMinutes()
-  , ts.getSeconds()
+  sprintf "%d-%02d-%02d %02d:%02d:%02dZ"
+  , ts.getUTCFullYear()
+  , ts.getUTCMonth()
+  , ts.getUTCDate()
+  , ts.getUTCHours()
+  , ts.getUTCMinutes()
+  , ts.getUTCSeconds()
 
 logrequest = (ts, req) ->
   console.log "%s < %s %s"
