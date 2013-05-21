@@ -6,6 +6,7 @@ path   = require 'path'
 qs     = require 'querystring'
 util   = require 'util'
 parser = require './routes-parser'
+log    = require './logging'
 
 mkdir_p = require 'mkdirp'
 sprintf = require 'printf'
@@ -23,37 +24,6 @@ extend = (dest, sources...) ->
       dest[key] = val
   dest
 
-tsfmt = (ts) ->
-  sprintf "%d-%02d-%02d %02d:%02d:%02dZ"
-  , ts.getUTCFullYear()
-  , ts.getUTCMonth()
-  , ts.getUTCDate()
-  , ts.getUTCHours()
-  , ts.getUTCMinutes()
-  , ts.getUTCSeconds()
-
-logrequest = (ts, req) ->
-  console.log "%s < %s %s"
-  , (tsfmt ts)
-  , req.method
-  , req.path
-
-logresponse = (ts, req, res) ->
-  f = if res.statusCode >= 500
-    console.error
-  else
-    console.log
-  f "%s > %s %s %s"
-  , (tsfmt ts)
-  , res.statusCode
-  , req.method
-  , req.path
-
-logerror = (ts, req, e) ->
-  console.error "%s %s"
-  , (tsfmt ts)
-  , e
-
 write_response = (path, req, res, body) ->
   txt = sprintf "%s %s %s" \
   , res.statusCode
@@ -61,7 +31,7 @@ write_response = (path, req, res, body) ->
   , req.path
   txt += "\n\n#{body}" if body
   fs.writeFile path, txt, 'utf8', (e) ->
-    logerror new Date, req, e if e
+    log.error new Date, req, e if e
 
 responsepath = (req) ->
   sprintf "response/%s_%s"
@@ -74,7 +44,7 @@ responsepath = (req) ->
 _request = http.request
 
 request = (srv, options, done) ->
-  logrequest new Date, options
+  log.request new Date, options
   options = extend {}, srv, options
   req = _request options, _respond done
   req.on 'error', done
@@ -93,13 +63,13 @@ respond = (req) -> (e, body, res) ->
   ts = new Date
   responsef = responsepath req
   if e
-    logerror ts, req, e
+    log.error ts, req, e
     fs.unlink responsef, (e) ->
-      logerror new Date, req, e unless e?.code == 'ENOENT'
+      log.error new Date, req, e unless e?.code == 'ENOENT'
   else
-    logresponse ts, req, res
+    log.response ts, req, res
     mkdir_p (path.dirname responsef), (e) ->
-      return logerror new Date, req, e if e
+      return log.error new Date, req, e if e
       write_response responsef, req, res, body
 
 mkpath = (path, ps) ->
