@@ -10,7 +10,6 @@
   , "README.rest"
   , "bin/api-shotgun"
   , "lib/api-shotgun.coffee"
-  , "routes"
   , "tests/comb.t.coffee"
   ]
 , "bin": { "api-shotgun": "./bin/api-shotgun" }
