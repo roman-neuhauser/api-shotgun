@@ -46,11 +46,11 @@ _request = http.request
 request = (srv, options, done) ->
   log.request new Date, options
   options = extend {}, srv, options
-  req = _request options, _respond done
+  req = _request options, _collect_response done
   req.on 'error', done
   req.end()
 
-_respond = (done) -> (res) ->
+_collect_response = (done) -> (res) ->
   body = ''
   res.on 'data', (chunk) ->
     c = chunk.toString()
